@@ -1,20 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-	"github.com/phachon/qq-OAuth"
+	"github.com/pangshu/qq-OAuth"
 	"log"
 )
 
 var state = qq_OAuth.NewUtils().RandString(8)
-
+var appId = ""
+var appSecret = ""
+var callback = ""
+var scope = ""
 // login action
 func Login(res http.ResponseWriter, req *http.Request) {
-	appId := ""
-	appSecret := ""
-	callback := ""
-	scope := ""
-
 	oAuth := qq_OAuth.NewOAuth(appId, appSecret, callback, scope)
 	loginUrl := oAuth.GetAuthorURL(state)
 
@@ -23,6 +22,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 // callback action
 func Callback(res http.ResponseWriter, req *http.Request)  {
+	req.ParseForm()
 	reqState := req.Form.Get("state")
 	if reqState != state {
 		res.Write([]byte("error"))
@@ -30,15 +30,11 @@ func Callback(res http.ResponseWriter, req *http.Request)  {
 
 	authCode := req.Form.Get("code")
 
-	appId := ""
-	appSecret := ""
-	callback := ""
-	scope := ""
-
 	oAuth := qq_OAuth.NewOAuth(appId, appSecret, callback, scope)
-	oAuth.Access(authCode)
-
-	oAuth.GetUserInfo()
+	openid,_ := oAuth.Access(authCode)
+	fmt.Print(openid)
+	userInfo,_,_ := oAuth.GetUserInfo()
+	fmt.Print(userInfo)
 }
 
 func main()  {

@@ -112,16 +112,16 @@ func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 }
 
 // access
-func (oAuth *OAuth) Access(authCode string) error {
+func (oAuth *OAuth) Access(authCode string) (string,error) {
 	accessToken, err := oAuth.GetAccessToken(authCode)
 	if err != nil {
-		return err
+		return "",err
 	}
 	openId, err := oAuth.GetOpenId(accessToken)
 	if err != nil {
-		return err
+		return "",err
 	}
 	oAuth.AccessToken = accessToken
 	oAuth.OpenId = openId
-	return nil
+	return openId,nil
 }
