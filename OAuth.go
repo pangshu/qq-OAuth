@@ -3,6 +3,7 @@ package qq_OAuth
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -80,6 +81,7 @@ func (oAuth *OAuth) GetAccessToken(authCode string) (string, error) {
 func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 	value := map[string]string{
 		"access_token": accessToken,
+		"unionid": "1",
 	}
 	response, httpCode, err := NewUtils().HttpGet(QAuth_Api_OpenId, value, nil)
 	if err != nil {
@@ -103,6 +105,7 @@ func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
+	fmt.Print(resData)
 	openid, ok := resData["openid"]
 	if ok {
 		return openid, nil
